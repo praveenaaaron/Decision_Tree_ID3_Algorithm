@@ -1,118 +1,170 @@
-:
+
+### 📌 OVERVIEW:
+
+This ID3 algorithm:
+
+* Calculates **entropy** and **information gain**.
+* Recursively builds a **decision tree**.
+* Can **classify** unseen test data based on the tree.
 
 ---
 
-## **What the Code Does**
+## 🧩 EXPLANATION OF EACH PART
 
-### 🔹 **1. Load Data**
-
-```python
-def load_csv(filename)
-```
-
-* Reads a CSV file.
-* Returns the dataset as a list of rows and a separate list of headers.
-
-### **2. Entropy Calculation**
+### 🔹 1. **Importing Libraries**
 
 ```python
-def entropy(S)
+import math
+import csv
 ```
 
-* Computes Shannon entropy for the class labels in the dataset.
-
-### **3. Information Gain**
-
-```python
-def compute_gain(data, col)
-```
-
-* Calculates how much information gain is obtained by splitting on a specific attribute.
-
-### **4. Sub-Tables**
-
-```python
-def sub_tables(data, col, delete)
-```
-
-* Splits data based on unique values in a column.
-* Removes the column if `delete=True` (for recursive tree building).
-
-### **5. Build Decision Tree**
-
-```python
-def build_tree(data, features)
-```
-
-* Recursively builds the decision tree using the highest information gain at each level.
-* Uses a custom `Node` class.
-
-### **6. Display Tree**
-
-```python
-def print_tree(node, level=0)
-```
-
-* Nicely prints the tree structure.
-
-### **7. Classify a Test Instance**
-
-```python
-def classify(node, x_test, features)
-```
-
-* Traverses the tree based on feature values of a test instance.
-
-### **8. Main Program**
-
-* Loads training and test datasets.
-* Builds the tree and classifies each test instance.
+* `math` is used for log calculation.
+* `csv` is used to load CSV files containing datasets.
 
 ---
 
-## **Expected File Structure**
+### 🔹 2. **Loading the CSV File**
 
-* `Training_Dataset.csv`: Should contain training data (with headers and class labels in the last column).
-* `TestDataset.csv`: Should contain test instances (with the same features).
-
-Ensure both files are in:
-
+```python
+def load_csv(filename):
+    lines = csv.reader(open(filename, "r"))
+    dataset = list(lines)
+    headers = dataset.pop(0)
+    return dataset, headers
 ```
-D:\MLT_LAB\Decision_Tree_Algorithm\
-```
+
+* Opens and reads a CSV file.
+* Extracts **headers (feature names)**.
+* Returns the **dataset** (excluding header) and **headers**.
 
 ---
 
-##  Suggestions for Improvement
+### 🔹 3. **Node Class (Tree Node)**
 
-1. **Handle Binary Class Assumption in `entropy()`**
+```python
+class Node:
+    def __init__(self, attribute):
+        self.attribute = attribute
+        self.children = []
+        self.answer = ""
+```
 
-   * Currently assumes only 2 classes (binary classification).
-   * Generalize using:
+Each `Node` represents:
 
-     ```python
-     counts = [S.count(val)/len(S) for val in attr]
-     ```
-
-2. **Error Handling for File Paths**
-   Add:
-
-   ```python
-   try:
-       ...
-   except FileNotFoundError:
-       print("File not found!")
-   ```
-
-3. **Normalize Output**
-   You can display the decision tree using libraries like `graphviz` for better visualization.
+* `attribute`: Name of the feature to split on.
+* `children`: List of children (attribute value, child node).
+* `answer`: If it's a leaf node, stores the class label.
 
 ---
 
-##  Sample Output
+### 🔹 4. **Sub-Tables (Split the Data)**
+
+```python
+def sub_tables(data, col, delete):
+```
+
+* Splits the dataset based on the unique values in column `col`.
+* `delete=True` removes the splitting column for recursion.
+* Returns:
+
+  * `attr`: unique values (e.g., "Sunny", "Rainy")
+  * `dic`: dictionary mapping each value to its corresponding sub-table
+
+---
+
+### 🔹 5. **Entropy Calculation**
+
+```python
+def entropy(S):
+```
+
+* Calculates entropy for a list of class labels (`S`).
+* Assumes binary classification (improveable for multi-class).
+* Formula used:
+
+  $$
+  \text{Entropy} = -\sum p_i \log_2(p_i)
+  $$
+
+---
+
+### 🔹 6. **Compute Information Gain**
+
+```python
+def compute_gain(data, col):
+```
+
+* Computes **information gain** for a column:
+
+  $$
+  \text{Gain} = \text{Entropy(parent)} - \sum \left(\frac{|\text{subset}|}{|\text{total}|} \cdot \text{Entropy(subset)}\right)
+  $$
+* Picks the best attribute to split on.
+
+---
+
+### 🔹 7. **Build the Decision Tree**
+
+```python
+def build_tree(data, features):
+```
+
+* Recursive function to build the decision tree.
+* Base case: If all instances belong to one class → create a leaf node.
+* Recursive case: Find the best attribute (max gain), split, and recurse on each sub-table.
+
+---
+
+### 🔹 8. **Print the Decision Tree**
+
+```python
+def print_tree(node, level=0):
+```
+
+* Recursively prints the decision tree.
+* Indentation (`level`) shows depth.
+
+---
+
+### 🔹 9. **Classify New Instance**
+
+```python
+def classify(node, x_test, features):
+```
+
+* Takes a test instance and traverses the decision tree.
+* Returns predicted class label.
+* If unknown value is encountered → returns `"Unknown"`.
+
+---
+
+### 🔹 10. **Main Program**
+
+```python
+dataset, features = load_csv("...Training_Dataset.csv")
+node1 = build_tree(dataset, features)
+
+print("The decision tree for the dataset using ID3 algorithm is:")
+print_tree(node1, 0)
+
+testdata, features = load_csv("...TestDataset.csv")
+for xtest in testdata:
+    print("\nThe test instance:", xtest)
+    print("The label for test instance:", classify(node1, xtest, features))
+```
+
+#### What it does:
+
+1. Loads the training dataset and builds the tree.
+2. Prints the decision tree structure.
+3. Loads the test dataset.
+4. Classifies each test instance and prints the result.
+
+---
+
+## 🧪 SAMPLE TREE OUTPUT:
 
 ```
-The decision tree for the dataset using ID3 algorithm is:
 Outlook
   (Sunny)
     Humidity
@@ -134,5 +186,4 @@ Outlook
 
 
 
-
-
+Let me know if you want a **sample CSV dataset** to test this code or a **version with GUI/plotting support**.
