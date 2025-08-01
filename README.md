@@ -1,4 +1,4 @@
-The provided code is a **complete implementation of the ID3 Decision Tree Algorithm** in Python using CSV files for training and testing datasets. Here's a breakdown of how this works and any suggestions or highlights you might find useful:
+:
 
 ---
 
