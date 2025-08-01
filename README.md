@@ -162,28 +162,4 @@ for xtest in testdata:
 
 ---
 
-## 🧪 SAMPLE TREE OUTPUT:
 
-```
-Outlook
-  (Sunny)
-    Humidity
-      (High)
-        => No
-      (Normal)
-        => Yes
-  (Overcast)
-    => Yes
-  (Rain)
-    Wind
-      (Strong)
-        => No
-      (Weak)
-        => Yes
-```
-
----
-
-
-
-Let me know if you want a **sample CSV dataset** to test this code or a **version with GUI/plotting support**.
