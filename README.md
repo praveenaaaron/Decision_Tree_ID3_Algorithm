@@ -1,5 +1,5 @@
 
-### 📌 OVERVIEW:
+### OVERVIEW:
 
 This ID3 algorithm:
 
@@ -9,7 +9,7 @@ This ID3 algorithm:
 
 ---
 
-## 🧩 EXPLANATION OF EACH PART
+## EXPLANATION OF EACH PART
 
 ### 🔹 1. **Importing Libraries**
 
